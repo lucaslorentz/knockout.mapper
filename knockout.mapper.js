@@ -112,7 +112,7 @@
             var array;
 
             if (options.$merge) {
-                array = targetArray;
+                array = targetArray || [];
                 for (var i = 0; i < value.length; i++) {
                     var item = options.$key && targetArray ? find(targetArray, options.$key, value[i]) : null;
 
