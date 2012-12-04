@@ -151,7 +151,10 @@
             var value = ko.utils.unwrapObservable(observable);
             var arr = [];
             for (var i = 0; i < value.length; i++) {
-                var val = exports.toJS(value[i], options.$itemOptions);
+                var itemOptions = options.$itemOptions;
+                if (typeof itemOptions == 'function') itemOptions = itemOptions(observable, options);
+                
+                var val = exports.toJS(value[i], itemOptions);
                 if (val !== exports.ignore) {
                     arr.push(val);
                 }
