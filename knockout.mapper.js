@@ -1,4 +1,4 @@
-(function(factory) {
+(function (factory) {
     if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
         // CommonJS or Node: hard-coded dependency on "knockout"
         factory(require("knockout"), exports);
@@ -6,66 +6,63 @@
         // AMD anonymous module with hard-coded dependency on "knockout"
         define(["knockout", "exports"], factory);
     } else {
-        // <script> tag: use the global `ko` object, attaching a `mapping` property
+        // <script> tag: use the global `ko` object, attaching a `mapper` property
         factory(ko, ko.mapper = {});
     }
-})(function(ko, exports) {
-    exports.fromJS = function(value, options, target, wrap) {
+})(function (ko, exports) {
+    exports.fromJS = function (value, options, target, wrap) {
         if (!options) options = {};
 
         var handler = options.$handler || options;
-        if (typeof(handler) == 'function') handler = handler(value, options, target, wrap);
-        if (typeof(handler) != 'string') handler = 'auto';
+        if (typeof (handler) == 'function') handler = handler(value, options, target, wrap);
+        if (typeof (handler) != 'string') handler = 'auto';
         return exports.handlers[handler].fromJS(value, options, target, wrap);
     };
 
-    exports.toJS = function(value, options) {
+    exports.toJS = function (value, options) {
         if (!options) options = {};
 
         var handler = options.$handler || options;
-        if (typeof(handler) == 'function') handler = handler(value, options);
-        if (typeof(handler) != 'string') handler = 'auto';
+        if (typeof (handler) == 'function') handler = handler(value, options);
+        if (typeof (handler) != 'string') handler = 'auto';
         return exports.handlers[handler].toJS(value, options);
     };
 
-    exports.fromJSON = function(value, options, target, wrap) {
+    exports.fromJSON = function (value, options, target, wrap) {
         return exports.fromJS(ko.utils.parseJson(value), options, target, wrap);
     };
 
-    exports.toJSON = function(value, options) {
+    exports.toJSON = function (value, options) {
         return ko.utils.stringifyJson(exports.toJS(value, options));
+    };
+
+    exports.resolveFromJSHandler = function (value, options, target, wrap) {
+        var type = getType(value);
+        if (type == "array") return 'array';
+        if (type == "object") return 'object';
+
+        return 'value';
+    };
+
+    exports.resolveToJSHandler = function (observable, options) {
+        var value = ko.utils.unwrapObservable(observable);
+
+        var type = getType(value);
+        if (type == "array") return 'array';
+        if (type == "object") return 'object';
+
+        return 'value';
     };
 
     exports.handlers = {};
 
     exports.handlers.auto = {
-        fromJS: function(value, options, target, wrap) {
-            var handler;
-            if (ko.isComputed(target) && !target.hasWriteFunction) {
-                handler = 'ignore';
-            } else {
-                var type = getType(value);
-                if (type == "array") {
-                    handler = 'array';
-                } else if (type == "object") {
-                    handler = 'object';
-                } else {
-                    handler = 'value';
-                }
-            }
+        fromJS: function (value, options, target, wrap) {
+            var handler = exports.resolveFromJSHandler(value, options, target, wrap);
             return exports.handlers[handler].fromJS(value, options, target, wrap);
         },
-        toJS: function(observable, options) {
-            var value = ko.utils.unwrapObservable(observable);
-            var type = getType(value);
-            var handler;
-            if (type == "array") {
-                handler = 'array';
-            } else if (type == "object") {
-                handler = 'object';
-            } else {
-                handler = 'value';
-            }
+        toJS: function (observable, options) {
+            var handler = exports.resolveToJSHandler(observable, options);
             return exports.handlers[handler].toJS(observable, options);
         }
     };
@@ -73,40 +70,48 @@
     exports.ignore = {};
 
     exports.handlers.ignore = {
-        fromJS: function(value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap) {
             return exports.ignore;
         },
-        toJS: function(observable, options) {
+        toJS: function (observable, options) {
             return exports.ignore;
         }
     };
 
     exports.handlers.copy = {
-        fromJS: function(value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap) {
+            if (ko.isComputed(target) && !target.hasWriteFunction) return exports.ignore;
+
             return value;
         },
-        toJS: function(value, options) {
+        toJS: function (value, options) {
             return value;
         }
     };
 
     exports.handlers.value = {
-        fromJS: function(value, options, target, wrap) {
-            if (ko.isObservable(target)) {
-                target(value);
-                return target;
-            } else if (wrap) {
-                return ko.observable(value);
+        fromJS: function (value, options, target, wrap) {
+            if (ko.isComputed(target) && !target.hasWriteFunction) return exports.ignore;
+
+            if (wrap) {
+                if (ko.isObservable(target)) {
+                    target(value);
+                    return target;
+                } else {
+                    return ko.observable(value);
+                }
             } else {
                 return value;
             }
         },
-        toJS: function(observable, options) {
+        toJS: function (observable, options) {
             return ko.utils.unwrapObservable(observable);
         }
     };
     exports.handlers.array = {
-        fromJS: function(value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap) {
+            if (ko.isComputed(target) && !target.hasWriteFunction) return exports.ignore;
+
             var targetArray = ko.utils.unwrapObservable(target);
 
             var array;
@@ -138,22 +143,24 @@
                     }
                 }
             }
-            if (ko.isObservable(target)) {
-                target(array);
-                return target;
-            } else if (wrap) {
-                return ko.observableArray(array);
+            if (wrap) {
+                if (ko.isObservable(target)) {
+                    target(array);
+                    return target;
+                } else {
+                    return ko.observableArray(array);
+                }
             } else {
                 return array;
             }
         },
-        toJS: function(observable, options) {
+        toJS: function (observable, options) {
             var value = ko.utils.unwrapObservable(observable);
             var arr = [];
             for (var i = 0; i < value.length; i++) {
                 var itemOptions = options.$itemOptions;
                 if (typeof itemOptions == 'function') itemOptions = itemOptions(observable, options);
-                
+
                 var val = exports.toJS(value[i], itemOptions);
                 if (val !== exports.ignore) {
                     arr.push(val);
@@ -163,7 +170,9 @@
         }
     };
     exports.handlers.object = {
-        fromJS: function(value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap) {
+            if (ko.isComputed(target) && !target.hasWriteFunction) return exports.ignore;
+
             var obj = ko.utils.unwrapObservable(target);
 
             if (!obj) {
@@ -177,16 +186,18 @@
                     obj[p] = val;
                 }
             }
-            if (ko.isObservable(target)) {
-                target(obj);
-                return target;
-            } else if (wrap) {
-                return ko.observable(obj);
+            if (wrap) {
+                if (ko.isObservable(target)) {
+                    target(obj);
+                    return target;
+                } else {
+                    return ko.observable(obj);
+                }
             } else {
                 return obj;
             }
         },
-        toJS: function(observable, options) {
+        toJS: function (observable, options) {
             var value = ko.utils.unwrapObservable(observable);
             var obj = {};
             for (var p in value) {
@@ -224,6 +235,7 @@
         if (x == null) return null;
         if (x instanceof Array) return "array";
         if (x instanceof Date) return "date";
+        if (x instanceof RegExp) return "regex";
         return typeof x;
     }
 });

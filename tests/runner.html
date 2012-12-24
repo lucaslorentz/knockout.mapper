@@ -1,0 +1,44 @@
+<html>
+<head>
+    <title>Knockout Mapper Tests</title>
+</head>
+<body>
+    <link href="libs/jasmine-1.3.1/jasmine.css" type="text/css" rel="stylesheet" />
+    <script src="libs/jasmine-1.3.1/jasmine.js" type="text/javascript"></script>
+    <script src="libs/jasmine-1.3.1/jasmine-html.js" type="text/javascript"></script>
+
+    <script src="libs/knockout-2.2.0.js" type="text/javascript"></script>
+    <script src="../knockout.mapper.js" type="text/javascript"></script>
+    <script src="tests.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        (function () {
+            var jasmineEnv = jasmine.getEnv();
+            jasmineEnv.updateInterval = 250;
+
+            var htmlReporter = new jasmine.HtmlReporter();
+            jasmineEnv.addReporter(htmlReporter);
+
+            jasmineEnv.specFilter = function (spec) {
+                return htmlReporter.specFilter(spec);
+            };
+
+            var currentWindowOnload = window.onload;
+            window.onload = function () {
+                if (currentWindowOnload) {
+                    currentWindowOnload();
+                }
+
+                document.querySelector('.version').innerHTML = jasmineEnv.versionString();
+                execJasmine();
+            };
+
+            function execJasmine() {
+                jasmineEnv.execute();
+            }
+        })();
+    </script>
+
+    <div class="version"></div>
+</body>
+</html>
