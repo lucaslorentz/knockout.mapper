@@ -1,4 +1,4 @@
-###This project is under development and we are not commited to backwards compatibility yet
+###This project is under development, I'm not commited to backwards compatibility yet
 
 #Knockout Mapper
 
