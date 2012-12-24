@@ -29,7 +29,7 @@ var mapping = {
 };
 ```
 
-##Handlers:  
+##Handlers
 ###auto - Resolves and executes the default handler for that object
 When a handler is not specified, this handler is used by default.
 
@@ -57,7 +57,7 @@ When a handler is not specified, this handler is used by default.
 
 ###ignore - Ignore values on conversion from JS and to JS  
 
-##Examples:
+##Examples
 
 ###From JS
 You can call fromJS passing only the data that will be transformed
