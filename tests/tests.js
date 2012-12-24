@@ -64,7 +64,7 @@ describe("Auto handler", function(){
 });
 
 describe("Object handler", function(){
-    it("should wrap all poroperties on observables", function(){
+    it("should wrap all properties on observables", function(){
         var result = ko.mapper.fromJS(simpleObject);
 
         expect(ko.isObservable(result.FirstName)).toBeTruthy();
