@@ -75,6 +75,11 @@ You can also pass just the handler name:
 var model = ko.mapper.fromJS(data, 'object');
 ```
 
+Updating an existent model:
+```JS
+ko.mapper.fromJS(data, mapping, model);
+```
+
 ###To JS
 You can call toJS passing only the model that will be transformed
 ```JS
