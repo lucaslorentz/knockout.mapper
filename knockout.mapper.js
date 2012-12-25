@@ -11,21 +11,41 @@
     }
 })(function (ko, exports) {
     exports.fromJS = function (value, options, target, wrap) {
-        if (!options) options = {};
+        var handler = "auto";
 
-        var handler = options.$handler || options;
-        if (typeof (handler) == 'function') handler = handler(value, options, target, wrap);
-        if (typeof (handler) != 'string') handler = 'auto';
-        return exports.handlers[handler].fromJS(value, options, target, wrap);
+        if (options) {
+            if (options.$handler) {
+                handler = options.$handler.fromJS || options.$handler;
+            } else if (getType(options) == "string") {
+                handler = options;
+            }
+        } else {
+            options = {};
+        }
+
+        if (typeof (handler) == 'function')
+            return handler(value, options, target, wrap);
+        else
+            return exports.handlers[handler].fromJS(value, options, target, wrap);
     };
 
     exports.toJS = function (value, options) {
-        if (!options) options = {};
+        var handler = "auto";
 
-        var handler = options.$handler || options;
-        if (typeof (handler) == 'function') handler = handler(value, options);
-        if (typeof (handler) != 'string') handler = 'auto';
-        return exports.handlers[handler].toJS(value, options);
+        if (options) {
+            if (options.$handler) {
+                handler = options.$handler.toJS || options.$handler;
+            } else if (getType(options) == "string") {
+                handler = options;
+            }
+        } else {
+            options = {};
+        }
+
+        if (typeof (handler) == 'function')
+            return handler(value, options);
+        else
+            return exports.handlers[handler].toJS(value, options);
     };
 
     exports.fromJSON = function (value, options, target, wrap) {
@@ -124,7 +144,7 @@
                     var itemOptions = options.$itemOptions;
                     if (typeof itemOptions == 'function') itemOptions = itemOptions(value, options, target);
 
-                    var val = exports.fromJS(value[i], itemOptions, item, false);
+                    var val = exports.fromJS(value[i], itemOptions, item);
                     if (val !== exports.ignore && !item) {
                         array.push(val);
                     }
@@ -137,13 +157,14 @@
                     var itemOptions = options.$itemOptions;
                     if (typeof itemOptions == 'function') itemOptions = itemOptions(value, options, target);
 
-                    var val = exports.fromJS(value[i], itemOptions, item, false);
+                    var val = exports.fromJS(value[i], itemOptions, item);
                     if (val !== exports.ignore) {
                         array.push(val);
                     }
                 }
             }
-            if (wrap) {
+            
+            if (wrap || wrap == undefined || wrap == null) {
                 if (ko.isObservable(target)) {
                     target(array);
                     return target;

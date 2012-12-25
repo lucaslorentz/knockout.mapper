@@ -29,7 +29,7 @@
                     currentWindowOnload();
                 }
 
-                document.querySelector('.version').innerHTML = jasmineEnv.versionString();
+                document.getElementById("version").innerHTML = jasmineEnv.versionString();
                 execJasmine();
             };
 
@@ -39,6 +39,6 @@
         })();
     </script>
 
-    <div class="version"></div>
+    <div id="version"></div>
 </body>
 </html>
