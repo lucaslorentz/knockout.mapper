@@ -136,13 +136,15 @@
 
             var array;
 
+            var findItems = options.$key && targetArray;
+
+            var itemOptions = options.$itemOptions;
+            if (typeof itemOptions == 'function') itemOptions = itemOptions();
+
             if (options.$merge) {
                 array = targetArray || [];
                 for (var i = 0; i < value.length; i++) {
-                    var item = options.$key && targetArray ? find(targetArray, options.$key, value[i]) : null;
-
-                    var itemOptions = options.$itemOptions;
-                    if (typeof itemOptions == 'function') itemOptions = itemOptions(value, options, target);
+                    var item = findItems ? find(targetArray, options.$key, value[i]) : null;
 
                     var val = exports.fromJS(value[i], itemOptions, item);
                     if (val !== exports.ignore && !item) {
@@ -152,10 +154,7 @@
             } else {
                 array = [];
                 for (var i = 0; i < value.length; i++) {
-                    var item = options.$key && targetArray ? find(targetArray, options.$key, value[i]) : null;
-
-                    var itemOptions = options.$itemOptions;
-                    if (typeof itemOptions == 'function') itemOptions = itemOptions(value, options, target);
+                    var item = findItems ? find(targetArray, options.$key, value[i]) : null;
 
                     var val = exports.fromJS(value[i], itemOptions, item);
                     if (val !== exports.ignore) {
@@ -163,7 +162,7 @@
                     }
                 }
             }
-            
+
             if (wrap || wrap == undefined || wrap == null) {
                 if (ko.isObservable(target)) {
                     target(array);
