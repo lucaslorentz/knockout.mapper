@@ -224,14 +224,6 @@ describe("Object handler", function(){
         expect(result.FirstName).toBe(simpleObject.FirstName);
     });
 
-    it("should ignore when target is readOnly computed (from JS)", function () {
-        var value = {};
-        var computed = ko.computed(function() { return value; });
-        
-        var result = ko.mapper.fromJS(value, null, computed, true);
-        expect(result).toBe(ko.mapper.ignore);
-    });
-
     it("should unwrap object and it's properties (to JS)", function () {
         var observable = ko.observable(simpleModel);
 
@@ -307,14 +299,6 @@ describe("Array handler", function(){
         expect(result()[0].LastName).toBeUndefined();
     });
 
-    it("should ignore when target is readOnly computed (from JS)", function () {
-        var value = [];
-        var computed = ko.computed(function() { return value; });
-        
-        var result = ko.mapper.fromJS(value, null, computed);
-        expect(result).toBe(ko.mapper.ignore);
-    });
-
     it("should create observableArray of observableArrays (from JS)", function () {
         var array = [
             [1, 2],
@@ -366,14 +350,6 @@ describe("Value handler", function() {
         expect(result()).toBe(value);
     });
 
-    it("should ignore when target is readOnly computed (from JS)", function(){
-        var value = "Mary";
-        var computed = ko.computed(function() { return value; });
-        
-        var result = ko.mapper.fromJS(value, null, computed, true);
-        expect(result).toBe(ko.mapper.ignore);
-    });
-
     it("should unwrap value from observable (to JS)", function(){
         var value = "Mary";
         var observable = ko.observable(value);
@@ -389,14 +365,6 @@ describe("Copy handler", function(){
         var value = "Mary";
         var result = ko.mapper.fromJS(value, "copy", null, true);
         expect(result).toBe(value);
-    });
-    
-    it("should ignore when target is readOnly computed (fromJS)", function(){
-        var value = "Mary";
-        var computed = ko.computed(function() { return value; });
-        
-        var result = ko.mapper.fromJS(value, "copy", computed, true);
-        expect(result).toBe(ko.mapper.ignore);
     });
 
     it("should copy value (toJS)", function () {

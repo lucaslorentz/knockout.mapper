@@ -100,8 +100,6 @@
 
     exports.handlers.copy = {
         fromJS: function (value, options, target, wrap) {
-            if (ko.isComputed(target) && !target.hasWriteFunction) return exports.ignore;
-
             return value;
         },
         toJS: function (value, options) {
@@ -111,8 +109,6 @@
 
     exports.handlers.value = {
         fromJS: function (value, options, target, wrap) {
-            if (ko.isComputed(target) && !target.hasWriteFunction) return exports.ignore;
-
             if (wrap) {
                 if (ko.isObservable(target)) {
                     target(value);
@@ -130,8 +126,6 @@
     };
     exports.handlers.array = {
         fromJS: function (value, options, target, wrap) {
-            if (ko.isComputed(target) && !target.hasWriteFunction) return exports.ignore;
-
             var targetArray = ko.utils.unwrapObservable(target);
 
             var array;
@@ -191,8 +185,6 @@
     };
     exports.handlers.object = {
         fromJS: function (value, options, target, wrap) {
-            if (ko.isComputed(target) && !target.hasWriteFunction) return exports.ignore;
-
             var obj = ko.utils.unwrapObservable(target);
 
             if (!obj) {
