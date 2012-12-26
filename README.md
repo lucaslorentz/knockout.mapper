@@ -39,8 +39,6 @@ When a handler is not specified, this handler is used by default.
    *  Accepts: function():object
 *  **$default** - default handler for all properties.  
    *  Accepts: string or function(value, options, target, wrap):string  
-*  **$create** - custom create function
-   *  Accepts: function(value, options):object
   
 ###array - Converts arrays and iterates through all elements
 **Options:**  
