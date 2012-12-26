@@ -37,8 +37,7 @@ When a handler is not specified, this handler is used by default.
 **Options:**
 *  **$type** - constructor function.
    *  Accepts: function():object
-*  **$default** - default handler for all properties.  
-   *  Accepts: string or function(value, options, target, wrap):string  
+*  **$default** - default mapping options for properties.    
   
 ###array - Converts arrays and iterates through all elements
 **Options:**  
