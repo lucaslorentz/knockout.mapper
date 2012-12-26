@@ -190,19 +190,6 @@ describe("Object handler", function(){
         expect(result.FullName()).toBe(simpleObject.FirstName + " " + simpleObject.LastName);
     });
 
-    it("should create the model using a custom create function (from JS)", function () {
-        var mapping = {
-            $create: function (value, options) {
-                return new SimpleModel(value);
-            }
-        };
-
-        var result = ko.mapper.fromJS(simpleObject, mapping);
-
-        expect(ko.isComputed(result.FullName)).toBeTruthy();
-        expect(result.FullName()).toBe(simpleObject.FirstName + " " + simpleObject.LastName);
-    });
-
     it("should wrap the object on an observable (from JS)", function(){
         var result = ko.mapper.fromJS(simpleObject, null, null, true);
         

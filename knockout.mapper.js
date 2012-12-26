@@ -198,7 +198,6 @@
 
             if (!obj) {
                 if (options.$type) obj = new options.$type;
-                else if (options.$create) obj = options.$create(value, options);
                 else obj = {};
             }
             for (var p in value) {
