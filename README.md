@@ -8,13 +8,7 @@ It is based handlers (ignore, copy, object, array...) that converts knockout mod
 
 Every handler knows how to convert from JS and to JS, you can use the same mapping on fromJS and toJS.  
 
-The mapping syntax is not compatible with **Knockout Mapping**, instead of:
-```JS
-var mapping = {
-  'ignore': ['PropertyA', 'PropertyB']
-};
-```
-on **Knockout Mapper** you define the handler/options on each property:
+On **Knockout Mapper** you define the handler/options on each property:
 ```JS
 var mapping = {
   'PropertyA': 'ignore',
@@ -28,6 +22,8 @@ var mapping = {
   'PropertyC': 'auto'
 };
 ```
+
+It is **NOT** compatible with **Knockout Mapping** syntax.
 
 ##Handlers
 ###auto - Resolves and executes the default handler for that object
