@@ -1,5 +1,3 @@
-###This project is under development, I'm not commited to backwards compatibility yet
-
 #Knockout Mapper
 
 An extensible and fast object mapping plugin for KnockoutJS.  
@@ -24,6 +22,30 @@ var mapping = {
 ```
 
 It is **NOT** compatible with **Knockout Mapping** syntax.
+
+##Methods
+###FromJS - Converts plain javascript objects to a observable models
+**Parameters:**
+*  **value** - Data to be converted  
+   * type: object
+   * required
+*  **options** - Mapping configuration
+   * type: object, string
+   * optional
+*  **target** - Target model that should be updated
+   * type: object, observable, observableArray, computed
+   * optional
+*  **wrap** - Forces to wrap or don't wrap on observables  
+   * type: boolean
+   * optional (each handler may have a different behavior when this parameter is not set)
+
+###ToJS - Converts models to plain javascript objects
+*  **value** - Model to be converted 
+   * type: object, observable, observableArray, computed
+   * required
+*  **options** - Mapping configuration
+   * type: object
+   * optional
 
 ##Handlers
 ###auto - Resolves and executes the default handler for that object
