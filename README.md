@@ -27,24 +27,24 @@ It is **NOT** compatible with **Knockout Mapping** syntax.
 ###FromJS - Converts plain javascript objects to a observable models
 **Parameters:**
 *  **value** - Data to be converted  
-   * type: object
+   * accepts: object
    * required
 *  **options** - Mapping configuration
-   * type: object, string
+   * accepts: object, string
    * optional
 *  **target** - Target model that should be updated
-   * type: object, observable, observableArray, computed
+   * accepts: object, observable, observableArray, computed
    * optional
 *  **wrap** - Forces to wrap or don't wrap on observables  
-   * type: boolean
+   * accepts: boolean
    * optional (each handler may have a different behavior when this parameter is not set)
 
 ###ToJS - Converts models to plain javascript objects
 *  **value** - Model to be converted 
-   * type: object, observable, observableArray, computed
+   * accepts: object, observable, observableArray, computed
    * required
 *  **options** - Mapping configuration
-   * type: object
+   * accepts: object
    * optional
 
 ##Handlers
