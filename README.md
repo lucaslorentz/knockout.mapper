@@ -23,10 +23,10 @@ var mapping = {
 
 It is **NOT** compatible with **Knockout Mapping** syntax.
 
-**NEW** Fiddle with basic usage:  
+**NEW!** Fiddle with basic usage:  
 http://jsfiddle.net/LucasLorentz/tC5rE/
 
-**NEW** Fiddle comparing it with Knockout Mapping:  
+**NEW!** Fiddle comparing it with Knockout Mapping:  
 http://jsfiddle.net/LucasLorentz/h8hsx/
 
 ##Methods
