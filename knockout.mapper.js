@@ -13,6 +13,9 @@
     exports.fromJS = function (value, options, target, wrap) {
         var handler = "auto";
 
+        if (options && options.$fromJS)
+            options = options.$fromJS;
+
         if (options) {
             if (options.$handler) {
                 handler = options.$handler.fromJS || options.$handler;
@@ -31,6 +34,9 @@
 
     exports.toJS = function (value, options) {
         var handler = "auto";
+
+        if (options && options.$toJS)
+            options = options.$toJS;
 
         if (options) {
             if (options.$handler) {
@@ -109,13 +115,11 @@
 
     exports.handlers.value = {
         fromJS: function (value, options, target, wrap) {
-            if (wrap) {
-                if (ko.isObservable(target)) {
-                    target(value);
-                    return target;
-                } else {
-                    return ko.observable(value);
-                }
+            if (ko.isObservable(target) && (wrap || wrap == undefined || wrap == null)) {
+                target(value);
+                return target;
+            } else if (wrap) {
+                return ko.observable(value);
             } else {
                 return value;
             }
@@ -159,11 +163,11 @@
 
             if (wrap || wrap == undefined || wrap == null) {
                 if (ko.isObservable(target)) {
-                    target(array);
-                    return target;
-                } else {
-                    return ko.observableArray(array);
-                }
+					target(array);
+					return target;
+				} else {
+					return ko.observableArray(array);
+				}
             } else {
                 return array;
             }
@@ -197,13 +201,11 @@
                     obj[p] = val;
                 }
             }
-            if (wrap) {
-                if (ko.isObservable(target)) {
-                    target(obj);
-                    return target;
-                } else {
-                    return ko.observable(obj);
-                }
+            if (ko.isObservable(target) && (wrap || wrap == undefined || wrap == null)) {
+                target(obj);
+                return target;
+            } else if (wrap) {
+                return ko.observable(obj);
             } else {
                 return obj;
             }

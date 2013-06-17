@@ -62,7 +62,7 @@ describe("Knockout Mapper", function () {
         expect(result).toBe(ko.mapper.ignore);
     });
 
-    it("should accept different handlers (from JS, to JS)", function () {
+    it("should accept different handlers to map fromJS and toJS (from JS, to JS)", function () {
         var mapping = {
             $handler: {
                 fromJS: "copy",
@@ -77,6 +77,25 @@ describe("Knockout Mapper", function () {
 
         var toJSResult = ko.mapper.toJS(value, mapping);
         expect(toJSResult).toBe(ko.mapper.ignore);
+    });
+
+    it("should accept different options (from JS, to JS)", function () {
+        var mapping = {
+            $fromJS: {
+                'LastName': 'ignore'
+            },
+            $toJS: {}
+        };
+
+        var fromJSResult = ko.mapper.fromJS(simpleObject, mapping);
+        expect(fromJSResult.LastName).toBeUndefined();
+
+        var model = new SimpleModel();
+        model.FirstName("FN");
+        model.LastName("LN");
+
+        var toJSResult = ko.mapper.toJS(model, mapping);
+        expect(toJSResult.LastName).toBe(model.LastName());
     });
 
 
@@ -196,12 +215,28 @@ describe("Object handler", function(){
         expect(ko.isObservable(result)).toBeTruthy();
     });
 
-    it("should set the object on target observable (from JS)", function () {
+    it("should set the object on target observable when wrap is true (from JS)", function () {
         var observable = ko.observable();
 
         var result = ko.mapper.fromJS(simpleObject, null, observable, true);
         expect(result).toBe(observable);
-        expect(result()).not.toBe(simpleObject);
+        expect(observable()).not.toBe(simpleObject);
+    });
+	
+	it("should set the object on target observable when wrap is not set (from JS)", function () {
+        var observable = ko.observable();
+
+        var result = ko.mapper.fromJS(simpleObject, null, observable);
+        expect(result).toBe(observable);
+        expect(observable()).not.toBe(simpleObject);
+    });
+	
+	it("should not set the object on target observable when wrap is false (from JS)", function () {
+        var observable = ko.observable();
+
+        var result = ko.mapper.fromJS(simpleObject, null, observable, false);
+        expect(result).not.toBe(observable);
+        expect(observable()).not.toBe(simpleObject);
     });
 
     it("should use a default handler on all properties (from JS)", function () {
@@ -242,13 +277,29 @@ describe("Array handler", function(){
         expect(result()).not.toBe(simpleArray);
         expect(result()).toEqual(simpleArray);
     });
+	
+    it("should replace observableArray contents when wrap is true (from JS)", function () {
+        var observableArray = ko.observableArray(simpleArray.slice());
 
-    it("should replace observableArray contents (from JS)", function () {
+        var result = ko.mapper.fromJS(simpleArray2, null, observableArray, true);
+        expect(result).toBe(observableArray);
+        expect(observableArray()).toEqual(simpleArray2);
+    });
+
+    it("should replace observableArray contents when wrap is not defined (from JS)", function () {
         var observableArray = ko.observableArray(simpleArray.slice());
 
         var result = ko.mapper.fromJS(simpleArray2, null, observableArray);
         expect(result).toBe(observableArray);
-        expect(result()).toEqual(simpleArray2);
+        expect(observableArray()).toEqual(simpleArray2);
+    });
+	
+	it("should not replace observableArray contents when wrap is false (from JS)", function () {
+        var observableArray = ko.observableArray(simpleArray.slice());
+
+        var result = ko.mapper.fromJS(simpleArray2, null, observableArray, false);
+        expect(result).not.toBe(observableArray);
+        expect(observableArray()).not.toEqual(simpleArray2);
     });
 
     it("should merge arrays (from JS)", function () {
@@ -341,13 +392,32 @@ describe("Value handler", function() {
         expect(result()).toBe(value);
     });
 
-    it("should set the value on target observable (from JS)", function(){
+    it("should set the value on target observable when wrap is true (from JS)", function(){
         var value = "Mary";
         var observable = ko.observable();
 
         var result = ko.mapper.fromJS(value, null, observable, true);
         expect(result).toBe(observable);
         expect(result()).toBe(value);
+    });
+	
+    it("should set the value on target observable when wrap is undefined (from JS)", function(){
+        var value = "Mary";
+        var observable = ko.observable();
+
+        var result = ko.mapper.fromJS(value, null, observable);
+        expect(result).toBe(observable);
+        expect(result()).toBe(value);
+    });
+	
+    it("should not set the value on target observable when wrap is false (from JS)", function(){
+        var value = "Mary";
+        var observable = ko.observable();
+
+        var result = ko.mapper.fromJS(value, null, observable, false);
+        expect(result).not.toBe(observable);
+		expect(result).toBe(value);
+        expect(observable()).not.toBe(value);
     });
 
     it("should unwrap value from observable (to JS)", function(){
