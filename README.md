@@ -1,5 +1,3 @@
-###This project is under development, I'm not commited to backwards compatibility yet
-
 #Knockout Mapper
 
 An extensible and fast object mapping plugin for KnockoutJS.  
@@ -8,13 +6,7 @@ It is based handlers (ignore, copy, object, array...) that converts knockout mod
 
 Every handler knows how to convert from JS and to JS, you can use the same mapping on fromJS and toJS.  
 
-The mapping syntax is not compatible with **Knockout Mapping**, instead of:
-```JS
-var mapping = {
-  'ignore': ['PropertyA', 'PropertyB']
-};
-```
-on **Knockout Mapper** you define the handler/options on each property:
+On **Knockout Mapper** you define the handler/options on each property:
 ```JS
 var mapping = {
   'PropertyA': 'ignore',
@@ -28,6 +20,38 @@ var mapping = {
   'PropertyC': 'auto'
 };
 ```
+
+It is **NOT** compatible with **Knockout Mapping** syntax.
+
+**NEW!** Fiddle with basic usage:  
+http://jsfiddle.net/LucasLorentz/tC5rE/
+
+**NEW!** Fiddle comparing it with Knockout Mapping:  
+http://jsfiddle.net/LucasLorentz/h8hsx/
+
+##Methods
+###FromJS - Converts plain javascript objects to a observable models
+**Parameters:**
+*  **value** - Data to be converted  
+   * accepts: object
+   * required
+*  **options** - Mapping configuration
+   * accepts: object, string
+   * optional
+*  **target** - Target model that should be updated
+   * accepts: object, observable, observableArray, computed
+   * optional
+*  **wrap** - Forces to wrap or don't wrap on observables  
+   * accepts: boolean
+   * optional (each handler may have a different behavior when this parameter is not set)
+
+###ToJS - Converts models to plain javascript objects
+*  **value** - Model to be converted 
+   * accepts: object, observable, observableArray, computed
+   * required
+*  **options** - Mapping configuration
+   * accepts: object
+   * optional
 
 ##Handlers
 ###auto - Resolves and executes the default handler for that object
