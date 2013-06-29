@@ -2,9 +2,9 @@
 
 An extensible and fast object mapping plugin for KnockoutJS.  
 
-It is based handlers (ignore, copy, object, array...) that converts knockout models toJS and fromJS in different ways.  
+It is based on handlers (ignore, copy, object, array...) that converts knockout models toJS and fromJS in different ways.  
 
-Every handler knows how to convert from JS and to JS, you can use the same mapping on fromJS and toJS.  
+Every handler knows how to convert from JS and to JS.  
 
 On **Knockout Mapper** you define the handler/options on each property:
 ```JS
