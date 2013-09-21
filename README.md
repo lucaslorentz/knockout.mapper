@@ -9,15 +9,15 @@ Every handler knows how to convert from JS and to JS.
 On **Knockout Mapper** you define the handler/options on each property:
 ```JS
 var mapping = {
-  'PropertyA': 'ignore',
-  'PropertyB': 'ignore'
+  'propertyA': 'ignore',
+  'propertyB': 'ignore'
 };
 ```
 and you can also pass extra-options:
 ```JS
 var mapping = {
   $default: 'ignore',
-  'PropertyC': 'auto'
+  'propertyC': 'auto'
 };
 ```
 
@@ -122,19 +122,19 @@ var model = ko.mapper.toJS(data, 'object');
 All examples below will consider the following data:
 ```JS
 var data = {
-  FirstName: 'John',
-  LastName: 'Doe',
-  Age: 25,
-  Children: [
+  firstName: 'John',
+  lastName: 'Doe',
+  age: 25,
+  children: [
     {
-      FirstName: 'Maria',
-      LastName: 'Doe',
-      Age: 9
+      firstName: 'Maria',
+      lastName: 'Doe',
+      age: 9
     },
     {
-      FirstName: 'William',
-      LastName: 'Doe',
-      Age: 10
+      firstName: 'William',
+      lastName: 'Doe',
+      age: 10
     }
   ]
 };
@@ -143,8 +143,8 @@ var data = {
 Changing the handler of specific properties:
 ```JS
 var mapping = {
-  'LastName': 'copy',
-  'Age': 'ignore'
+  'lastName': 'copy',
+  'age': 'ignore'
 };
 ```
 
@@ -152,8 +152,8 @@ Specifying the root handler:
 ```JS
 var mapping = {
   $handler: 'object',
-  'LastName': 'copy',
-  'Age': 'ignore'
+  'lastName': 'copy',
+  'age': 'ignore'
 };
 ```
 
@@ -161,18 +161,18 @@ Changing the default configuration for all properties:
 ```JS
 var mapping = {
   $default: 'ignore',
-  'FirstName': 'auto'
+  'firstName': 'auto'
 };
 ```
 
 Array mapping options:
 ```JS
 var mapping = {
-  'Children': {
-    $key: 'FirstName',
+  'children': {
+    $key: 'firstName',
     $merge: true,
     $itemOptions: {
-      'Age': 'ignore'
+      'age': 'ignore'
     }
   }
 };
@@ -181,8 +181,8 @@ var mapping = {
 $itemOptions can be a function:
 ```JS
 var mapping = {
-  'Children': {
-    $key: 'FirstName',
+  'children': {
+    $key: 'firstName',
     $merge: true,
     $itemOptions: function(){ return mapping; }
   }
@@ -194,11 +194,11 @@ Using a model type:
 var Model = function(){
   var self = this;
   
-  self.FirstName = ko.observable();
-  self.LastName = ko.observable();
+  self.firstName = ko.observable();
+  self.lastName = ko.observable();
   
-  self.FullName = ko.computed(function(){
-    return self.FirstName() + self.LastName();
+  self.fullName = ko.computed(function(){
+    return self.firstName() + self.lastName();
   });
 };
 
@@ -225,7 +225,7 @@ ko.mapper.handlers.importOnce = {
 };
 
 var mapping = {
-  'Age': 'importOnce'
+  'age': 'importOnce'
 };
 ```
 
