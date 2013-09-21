@@ -30,7 +30,7 @@ http://jsfiddle.net/LucasLorentz/tC5rE/
 http://jsfiddle.net/LucasLorentz/h8hsx/
 
 ##Methods
-###FromJS - Converts plain javascript objects to a observable models
+###FromJS - Converts plain javascript objects to observable models
 **Parameters:**
 *  **value** - Data to be converted  
    * accepts: object
