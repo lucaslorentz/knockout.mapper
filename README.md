@@ -23,7 +23,7 @@ var mapping = {
 
 It is **NOT** compatible with **Knockout Mapping** syntax.
 
-**NEW!** Performance comparision:
+**NEW!** Performance comparision:  
 http://jsperf.com/ko-viewmodel-vs-ko-mapping-complex-viewmodel-creation/25
 
 Fiddle with basic usage:  
