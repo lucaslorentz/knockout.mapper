@@ -23,10 +23,13 @@ var mapping = {
 
 It is **NOT** compatible with **Knockout Mapping** syntax.
 
-**NEW!** Fiddle with basic usage:  
+**NEW!** Performance comparision:
+http://jsperf.com/ko-viewmodel-vs-ko-mapping-complex-viewmodel-creation/25
+
+Fiddle with basic usage:  
 http://jsfiddle.net/LucasLorentz/tC5rE/
 
-**NEW!** Fiddle comparing it with Knockout Mapping:  
+Fiddle comparing it with Knockout Mapping:  
 http://jsfiddle.net/LucasLorentz/h8hsx/
 
 ##Methods
