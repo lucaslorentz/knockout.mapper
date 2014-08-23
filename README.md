@@ -32,6 +32,9 @@ http://jsfiddle.net/LucasLorentz/tC5rE/
 Fiddle comparing it with Knockout Mapping:  
 http://jsfiddle.net/LucasLorentz/h8hsx/
 
+You can also read our tests to understand all behaviors of the library:  
+https://github.com/LucasLorentz/knockout.mapper/blob/master/tests/tests.js
+
 ##Methods
 ###FromJS - Converts plain javascript objects to observable models
 **Parameters:**
