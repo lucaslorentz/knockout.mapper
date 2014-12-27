@@ -295,6 +295,7 @@ describe("Object handler", function(){
         var model = ko.mapper.fromJS(data, mapping);
         
         expect(createContext.getParentObject(0)).toBe(model);
+        expect(createContext.options).toBe(mapping.children.$itemOptions);
     });
 
     it("should wrap the object on an observable (from JS)", function(){

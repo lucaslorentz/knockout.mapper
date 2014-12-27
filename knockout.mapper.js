@@ -16,12 +16,17 @@
         return running != 0;
     };
 
-    exports.fromJSContext = function(parents) {
+    exports.fromJSContext = function(parents, options) {
         this.parents = parents || [];
+        this.options = options;
     };
 
     exports.fromJSContext.prototype.createChildContext = function(newParent) {
         return new exports.fromJSContext([newParent].concat(this.parents));
+    };
+
+    exports.fromJSContext.prototype.addOptions = function(options) {
+        return new exports.fromJSContext(this.parents, options);
     };
 
     exports.fromJSContext.prototype.getParentObject = function(index) {
@@ -246,7 +251,7 @@
             var obj = ko.utils.unwrapObservable(target);
 
             if (!obj) {
-                if (options.$create) obj = options.$create(context)
+                if (options.$create) obj = options.$create(context.addOptions(options))
                 else if (options.$type) obj = new options.$type;
                 else obj = {};
             }
