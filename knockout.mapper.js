@@ -10,8 +10,33 @@
         factory(ko, ko.mapper = {});
     }
 })(function (ko, exports) {
-    exports.fromJS = function (value, options, target, wrap) {
+    var running = 0;
+
+    exports.isRunning = function() { 
+        return running != 0;
+    };
+
+    exports.fromJSContext = function(parents) {
+        this.parents = parents || [];
+    };
+
+    exports.fromJSContext.prototype.createChildContext = function(newParent) {
+        return new exports.fromJSContext([newParent].concat(this.parents));
+    };
+
+    exports.fromJSContext.prototype.getParentObject = function(index) {
+        return this.parents[index];
+    };
+
+    exports.fromJS = function (value, options, target, wrap, context) {
+        if(!context)
+            context = new exports.fromJSContext();
+
+        running++;
+
         var handler = "auto";
+
+        if (typeof options == 'function') options = options();
 
         if (options && options.$fromJS)
             options = options.$fromJS;
@@ -26,14 +51,24 @@
             options = {};
         }
 
+        var result = null;
+
         if (typeof (handler) == 'function')
-            return handler(value, options, target, wrap);
+            result = handler(value, options, target, wrap, context);
         else
-            return exports.handlers[handler].fromJS(value, options, target, wrap);
+            result = exports.handlers[handler].fromJS(value, options, target, wrap, context);
+
+        running--;
+
+        return result;
     };
 
     exports.toJS = function (value, options) {
+        running++;
+
         var handler = "auto";
+
+        if (typeof options == 'function') options = options();
 
         if (options && options.$toJS)
             options = options.$toJS;
@@ -48,24 +83,47 @@
             options = {};
         }
 
+        var result = null;
+
         if (typeof (handler) == 'function')
-            return handler(value, options);
+            result = handler(value, options);
         else
-            return exports.handlers[handler].toJS(value, options);
+            result = exports.handlers[handler].toJS(value, options);
+
+        running--;
+
+        return result;
     };
 
-    exports.fromJSON = function (value, options, target, wrap) {
-        return exports.fromJS(ko.utils.parseJson(value), options, target, wrap);
+    exports.mergeOptions = function () {
+        var options = {};
+
+        for (var i = 0; i < arguments.length; i++) {
+            var toMerge = arguments[i];
+            for (var p in toMerge) {
+                if (getType(toMerge[p]) == "object")
+                    options[p] = exports.mergeOptions(options[p], toMerge[p]);
+                else
+                    options[p] = toMerge[p];
+            }
+        }
+
+        return options;
+    };
+
+    exports.fromJSON = function (value, options, target, wrap, context) {
+        return exports.fromJS(ko.utils.parseJson(value), options, target, wrap, context);
     };
 
     exports.toJSON = function (value, options) {
         return ko.utils.stringifyJson(exports.toJS(value, options));
     };
 
-    exports.resolveFromJSHandler = function (value, options, target, wrap) {
+    exports.resolveFromJSHandler = function (value, options, target, wrap, context) {
         var type = getType(value);
         if (type == "array") return 'array';
         if (type == "object") return 'object';
+        if (type == "function") return 'ignore';
 
         return 'value';
     };
@@ -76,6 +134,7 @@
         var type = getType(value);
         if (type == "array") return 'array';
         if (type == "object") return 'object';
+        if (type == "function") return 'ignore';
 
         return 'value';
     };
@@ -83,9 +142,9 @@
     exports.handlers = {};
 
     exports.handlers.auto = {
-        fromJS: function (value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap, context) {
             var handler = exports.resolveFromJSHandler(value, options, target, wrap);
-            return exports.handlers[handler].fromJS(value, options, target, wrap);
+            return exports.handlers[handler].fromJS(value, options, target, wrap, context);
         },
         toJS: function (observable, options) {
             var handler = exports.resolveToJSHandler(observable, options);
@@ -96,7 +155,7 @@
     exports.ignore = {};
 
     exports.handlers.ignore = {
-        fromJS: function (value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap, context) {
             return exports.ignore;
         },
         toJS: function (observable, options) {
@@ -105,7 +164,7 @@
     };
 
     exports.handlers.copy = {
-        fromJS: function (value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap, context) {
             return value;
         },
         toJS: function (value, options) {
@@ -114,7 +173,7 @@
     };
 
     exports.handlers.value = {
-        fromJS: function (value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap, context) {
             if (ko.isObservable(target) && (wrap || wrap == undefined || wrap == null)) {
                 target(value);
                 return target;
@@ -129,32 +188,27 @@
         }
     };
     exports.handlers.array = {
-        fromJS: function (value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap, context) {
             var targetArray = ko.utils.unwrapObservable(target);
 
-            var array;
-
+            var array = options.$merge ? (targetArray || []) : [];
             var findItems = options.$key && targetArray;
-
             var itemOptions = options.$itemOptions;
-            if (typeof itemOptions == 'function') itemOptions = itemOptions();
 
             if (options.$merge) {
-                array = targetArray || [];
                 for (var i = 0; i < value.length; i++) {
                     var item = findItems ? find(targetArray, options.$key, value[i]) : null;
 
-                    var val = exports.fromJS(value[i], itemOptions, item);
+                    var val = exports.fromJS(value[i], itemOptions, item, null, context);
                     if (val !== exports.ignore && !item) {
                         array.push(val);
                     }
                 }
             } else {
-                array = [];
                 for (var i = 0; i < value.length; i++) {
                     var item = findItems ? find(targetArray, options.$key, value[i]) : null;
 
-                    var val = exports.fromJS(value[i], itemOptions, item);
+                    var val = exports.fromJS(value[i], itemOptions, item, null, context);
                     if (val !== exports.ignore) {
                         array.push(val);
                     }
@@ -163,11 +217,11 @@
 
             if (wrap || wrap == undefined || wrap == null) {
                 if (ko.isObservable(target)) {
-					target(array);
-					return target;
-				} else {
-					return ko.observableArray(array);
-				}
+                    target(array);
+                    return target;
+                } else {
+                    return ko.observableArray(array);
+                }
             } else {
                 return array;
             }
@@ -188,19 +242,24 @@
         }
     };
     exports.handlers.object = {
-        fromJS: function (value, options, target, wrap) {
+        fromJS: function (value, options, target, wrap, context) {
             var obj = ko.utils.unwrapObservable(target);
 
             if (!obj) {
-                if (options.$type) obj = new options.$type;
+                if (options.$create) obj = options.$create(context)
+                else if (options.$type) obj = new options.$type;
                 else obj = {};
             }
+
+            var newContext = context.createChildContext(obj);
+
             for (var p in value) {
-                var val = exports.fromJS(value[p], options[p] || options.$default, obj[p], true);
+                var val = exports.fromJS(value[p], options[p] || options.$default, obj[p], true, newContext);
                 if (val !== exports.ignore && obj[p] != val) {
                     obj[p] = val;
                 }
             }
+
             if (ko.isObservable(target) && (wrap || wrap == undefined || wrap == null)) {
                 target(obj);
                 return target;

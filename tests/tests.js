@@ -120,6 +120,45 @@ describe("Knockout Mapper", function () {
         var toJSResult = ko.mapper.toJS(null, mapping);
         expect(toJSResult).toBe(toJSIdentifier);
     });
+
+    it("should know that the mapper is running", function () {
+        var firstData = {
+            name: 'Parent',
+            children: [{
+                id: 1,
+                name: 'Child 1'
+            }]
+        };
+
+        var updatedData = {
+            name: "Another Parent",
+            children: [{
+                id: 1,
+                name: "Another Child 1"
+            }]
+        };
+
+        var model = ko.mapper.fromJS(firstData);
+        var executions = 0;
+
+        model.name.subscribe(function() {
+            expect(ko.mapper.isRunning()).toBeTruthy();
+            executions++;
+        });
+
+        model.children()[0].name.subscribe(function() {
+            expect(ko.mapper.isRunning()).toBeTruthy();
+            executions++;
+        });
+
+        expect(ko.mapper.isRunning()).toBeFalsy();
+
+        ko.mapper.fromJS(updatedData, { children: { $key: 'id' }}, model);
+
+        expect(ko.mapper.isRunning()).toBeFalsy();
+
+        expect(executions).toBe(2);
+    });
 });
 
 describe("Auto handler", function(){
@@ -179,6 +218,14 @@ describe("Auto handler", function(){
         checkToJSHandler(ko.observable(Number.NaN), "value");
     });
 
+    it("should resolve to ignore handler (from JS)", function(){
+        checkFromJSHandler(function() { }, "ignore");
+    });
+
+    it("should resolve to ignore handler (to JS)", function () {
+        checkToJSHandler(function() { }, "ignore");
+    });
+
     function checkFromJSHandler(value, expectedHandler){
         var handler = ko.mapper.resolveFromJSHandler(value);
         expect(handler).toEqual(expectedHandler);
@@ -207,6 +254,47 @@ describe("Object handler", function(){
 
         expect(ko.isComputed(result.FullName)).toBeTruthy();
         expect(result.FullName()).toBe(simpleObject.FirstName + " " + simpleObject.LastName);
+    });
+
+    it("should create the model using a custom create function (from JS)", function(){
+        var mapping = {
+            $create: function() {
+                var obj = {};
+                obj.isMyObject = true;
+                return obj;
+            }
+        };
+
+        var result = ko.mapper.fromJS(simpleObject, mapping);
+        expect(ko.isObservable(result.FirstName)).toBeTruthy();
+        expect(result.FirstName()).toBe("John");
+        expect(result.isMyObject).toBeTruthy();
+    });
+
+    it("should provide context to a custom create function (from JS)", function(){
+        var data = {
+            name: 'John',
+            children: [{
+                name: 'Mary'
+            }]
+        }
+
+        var createContext = null;
+
+        var mapping = {
+            'children': {
+                $itemOptions: {
+                    $create: function(context) {
+                        createContext = context;
+                        return {};
+                    }
+                }
+            }
+        };
+
+        var model = ko.mapper.fromJS(data, mapping);
+        
+        expect(createContext.getParentObject(0)).toBe(model);
     });
 
     it("should wrap the object on an observable (from JS)", function(){
