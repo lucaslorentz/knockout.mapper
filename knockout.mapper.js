@@ -12,7 +12,7 @@
 })(function (ko, exports) {
     var running = 0;
 
-    exports.isRunning = function() { 
+    exports.isRunning = function() {
         return running != 0;
     };
 
@@ -249,8 +249,11 @@
     exports.handlers.object = {
         fromJS: function (value, options, target, wrap, context) {
             var obj = ko.utils.unwrapObservable(target);
+            var objectChanged = false;
 
             if (!obj) {
+                objectChanged = true;
+
                 if (options.$create) obj = options.$create(context.addOptions(options))
                 else if (options.$type) obj = new options.$type;
                 else obj = {};
@@ -260,13 +263,16 @@
 
             for (var p in value) {
                 var val = exports.fromJS(value[p], options[p] || options.$default, obj[p], true, newContext);
-                if (val !== exports.ignore && obj[p] != val) {
+                if (val !== exports.ignore && obj[p] !== val) {
                     obj[p] = val;
+                    objectChanged = true;
                 }
             }
 
             if (ko.isObservable(target) && (wrap || wrap == undefined || wrap == null)) {
-                target(obj);
+                if (objectChanged)
+                    target(obj);
+
                 return target;
             } else if (wrap) {
                 return ko.observable(obj);
