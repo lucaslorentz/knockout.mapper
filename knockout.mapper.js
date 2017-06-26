@@ -16,6 +16,11 @@
         return running != 0;
     };
 
+    // Set default options here that will be merged to
+    // every fromJS or toJS call.
+    exports.defaultOptions = {
+    };
+
     exports.fromJSContext = function(parents, options) {
         this.parents = parents || [];
         this.options = options;
@@ -47,13 +52,17 @@
             options = options.$fromJS;
 
         if (options) {
-            if (options.$handler) {
-                handler = options.$handler.fromJS || options.$handler;
-            } else if (getType(options) == "string") {
+            if (getType(options) == "string") {
                 handler = options;
+                options = exports.defaultOptions || {};
+            } else {
+                options = exports.mergeOptions(exports.defaultOptions, options);
+                if (options.$handler) {
+                    handler = options.$handler.fromJS || options.$handler;
+                }
             }
         } else {
-            options = {};
+            options = exports.defaultOptions || {};
         }
 
         var result = null;
@@ -79,13 +88,17 @@
             options = options.$toJS;
 
         if (options) {
-            if (options.$handler) {
-                handler = options.$handler.toJS || options.$handler;
-            } else if (getType(options) == "string") {
+            if (getType(options) == "string") {
                 handler = options;
+                options = exports.defaultOptions || {};
+            } else {
+                options = exports.mergeOptions(exports.defaultOptions, options);
+                if (options.$handler) {
+                    handler = options.$handler.toJS || options.$handler;
+                }
             }
         } else {
-            options = {};
+            options = exports.defaultOptions || {};
         }
 
         var result = null;
