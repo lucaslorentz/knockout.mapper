@@ -287,7 +287,7 @@
                     target(obj);
 
                 return target;
-            } else if (wrap) {
+            } else if (wrap && (options.$wrapObject === undefined || options.$wrapObject === true)) {
                 return ko.observable(obj);
             } else {
                 return obj;
