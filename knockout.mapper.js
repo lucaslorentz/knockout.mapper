@@ -196,7 +196,14 @@
         fromJS: function (value, options, target, wrap, context) {
             var targetArray = ko.utils.unwrapObservable(target);
 
-            var array = options.$merge ? (targetArray || []) : [];
+            var modified = true;
+            var array = [];
+            if (options.$merge) {
+                if (targetArray) {
+                    array = targetArray;
+                    modified = false;
+                }
+            }
             var findItems = options.$key && targetArray;
             var itemOptions = options.$itemOptions;
 
@@ -206,6 +213,7 @@
 
                     var val = exports.fromJS(value[i], itemOptions, item, null, context);
                     if (val !== exports.ignore && !item) {
+                        modified = true;
                         array.push(val);
                     }
                 }
@@ -215,6 +223,7 @@
 
                     var val = exports.fromJS(value[i], itemOptions, item, null, context);
                     if (val !== exports.ignore) {
+                        modified = true;
                         array.push(val);
                     }
                 }
@@ -222,7 +231,9 @@
 
             if (wrap || wrap == undefined || wrap == null) {
                 if (ko.isObservable(target)) {
-                    target(array);
+                    if (modified) {
+                        target(array);
+                    }
                     return target;
                 } else {
                     return ko.observableArray(array);
