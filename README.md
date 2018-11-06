@@ -235,6 +235,15 @@ var mapping = {
 };
 ```
 
+Dynamically ignore a member in toJS:
+```JS
+var mapping = {
+  '$ignoreNode': function(value, parent, index) {
+    // Ignore a member when it has a '_ignore_member' property
+    return value === undefined || !value._ignore_member;
+  }
+}
+
 ##LICENSE
 Licensed under the MIT License.  
 http://opensource.org/licenses/mit-license.php

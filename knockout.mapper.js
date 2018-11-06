@@ -246,6 +246,10 @@
             var value = ko.utils.unwrapObservable(observable);
             var arr = [];
             for (var i = 0; i < value.length; i++) {
+                if (options.$ignoreNode !== undefined && options.$ignoreNode(value[i], value, i)) {
+                    continue;
+                }
+
                 var itemOptions = options.$itemOptions;
                 if (typeof itemOptions == 'function') itemOptions = itemOptions(observable, options);
 
@@ -295,6 +299,10 @@
             var value = ko.utils.unwrapObservable(observable);
             var obj = {};
             for (var p in value) {
+                if (options.$ignoreNode !== undefined && options.$ignoreNode(value[p], value, p)) {
+                    continue;
+                }
+
                 var val = exports.toJS(value[p], options[p] || options.$default);
                 if (val !== exports.ignore) {
                     obj[p] = val;
