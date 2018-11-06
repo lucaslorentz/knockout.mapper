@@ -243,6 +243,7 @@ var mapping = {
     return value === undefined || !value._ignore_member;
   }
 }
+```
 
 ##LICENSE
 Licensed under the MIT License.  
