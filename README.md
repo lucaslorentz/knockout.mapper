@@ -1,4 +1,4 @@
-#Knockout Mapper
+# Knockout Mapper
 
 An extensible and fast object mapping plugin for KnockoutJS.  
 
@@ -35,8 +35,8 @@ http://jsfiddle.net/LucasLorentz/h8hsx/
 You can also read our tests to understand all behaviors of the library:  
 https://github.com/LucasLorentz/knockout.mapper/blob/master/tests/tests.js
 
-##Methods
-###FromJS - Converts plain javascript objects to observable models
+## Methods
+### FromJS - Converts plain javascript objects to observable models
 **Parameters:**
 *  **value** - Data to be converted  
    * accepts: object
@@ -51,7 +51,7 @@ https://github.com/LucasLorentz/knockout.mapper/blob/master/tests/tests.js
    * accepts: boolean
    * optional (each handler may have a different behavior when this parameter is not set)
 
-###ToJS - Converts models to plain javascript objects
+### ToJS - Converts models to plain javascript objects
 *  **value** - Model to be converted 
    * accepts: object, observable, observableArray, computed
    * required
@@ -59,17 +59,17 @@ https://github.com/LucasLorentz/knockout.mapper/blob/master/tests/tests.js
    * accepts: object
    * optional
 
-##Handlers
-###auto - Resolves and executes the default handler for that object
+## Handlers
+### auto - Resolves and executes the default handler for that object
 When a handler is not specified, this handler is used by default.
 
-###object - Converts objects and iterates through all properties 
+### object - Converts objects and iterates through all properties 
 **Options:**
 *  **$type** - constructor function.
    *  Accepts: function():object
 *  **$default** - default mapping options for properties.    
   
-###array - Converts arrays and iterates through all elements
+### array - Converts arrays and iterates through all elements
 **Options:**  
 *  **$key** - the name of the property used to compare elements, or a function returning the key
    *  Accepts: string or function(item):string  
@@ -78,15 +78,15 @@ When a handler is not specified, this handler is used by default.
    *  Default: true
 *  **$itemOptions** - mapping options to apply on each element
   
-###value - Wrap/Unwrap value on an observable
+### value - Wrap/Unwrap value on an observable
 
-###copy - Copy value without wrapping it on an observable  
+### copy - Copy value without wrapping it on an observable  
 
-###ignore - Ignore values on conversion from JS and to JS  
+### ignore - Ignore values on conversion from JS and to JS  
 
-##Examples
+## Examples
 
-###From JS
+### From JS
 You can call fromJS passing only the data that will be transformed
 ```JS
 var model = ko.mapper.fromJS(data);
@@ -107,7 +107,7 @@ Updating an existent model:
 ko.mapper.fromJS(data, mapping, model);
 ```
 
-###To JS
+### To JS
 You can call toJS passing only the model that will be transformed
 ```JS
 var data = ko.mapper.toJS(model);
@@ -123,7 +123,7 @@ You can also pass just the handler name:
 var model = ko.mapper.toJS(data, 'object');
 ```
 
-###Mapping
+### Mapping
 
 All examples below will consider the following data:
 ```JS
@@ -235,6 +235,6 @@ var mapping = {
 };
 ```
 
-##LICENSE
+## LICENSE
 Licensed under the MIT License.  
 http://opensource.org/licenses/mit-license.php
